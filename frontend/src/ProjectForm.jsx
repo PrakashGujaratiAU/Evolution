@@ -17,7 +17,7 @@ function ProjectForm() {
   const [customCategory, setCustomCategory] = useState("");
   const categoryOptions = ["History", "Technology", "Science", "Art", "Other"];
 
-  // Slide fields
+  // Slide form fields
   const [title, setTitle] = useState("Abacus");
   const [year, setYear] = useState("3000 BCE");
   const [description, setDescription] = useState(
@@ -33,22 +33,23 @@ function ProjectForm() {
   );
   const [slides, setSlides] = useState([]);
 
+  // This will track which slide we're editing. Null = adding new slide
+  const [selectedSlideIndex, setSelectedSlideIndex] = useState(null);
+
   // ============== Fetch existing project if ID is present (Edit Mode) ==========
+
   useEffect(() => {
     async function fetchProject() {
       try {
-        // Example: GET /projects/:id
-        const response = await axios.get(
-          `http://localhost:3001/projects/${id}`
-        );
+        const response = await axios.get(`http://localhost:3001/projects/${id}`);
         const data = response.data;
         // Populate fields
         setProjectName(data.projectName || "");
         setProjectCategory(data.projectCategory || "");
         setCustomCategory(data.customCategory || "");
         setSlides(data.slides || []);
-        // If you also have partial locking logic in DB, set locked state accordingly or not
-        // setLockedProjectFields( someConditionFromData );
+        // If you also have partial locking logic in DB, set lockedProjectFields based on that data if needed
+        // setLockedProjectFields(data.locked ?? false);
       } catch (error) {
         console.error("Error fetching project:", error);
       }
@@ -58,14 +59,10 @@ function ProjectForm() {
       // Edit Mode: fetch project
       fetchProject();
     } else {
-      // Create Mode: can reset fields if needed
+      // Create Mode: reset all fields
       resetFormFields();
     }
   }, [id]);
-
-  // (Optional) If you want to keep localStorage logic for new projects, you can keep it,
-  // but typically for editing an existing project, you might rely on your database instead.
-  // We'll keep minimal localStorage usage here, or remove it if you prefer.
 
   // ========= Lock/Unlock Logic =========
   const handleLockProjectFields = () => {
@@ -87,27 +84,66 @@ function ProjectForm() {
     setLockedProjectFields(false);
   };
 
-  // ========= Slides Logic =========
-  const handleAddSlide = () => {
-    const newSlide = {
-      title,
-      year,
-      description,
-      type,
-      duration,
-      url,
-      sourceUrl,
-    };
-    setSlides((prev) => [...prev, newSlide]);
+  // ========== Slides Logic ==========
 
-    // Clear fields
-    setTitle("");
-    setYear("");
-    setDescription("");
-    setType("image");
-    setDuration("");
-    setUrl("");
-    setSourceUrl("");
+  // 1. Add or Update Slide (depending on selectedSlideIndex)
+  const handleAddOrUpdateSlide = () => {
+    // If we're editing an existing slide
+    if (selectedSlideIndex !== null) {
+      const updatedSlides = [...slides];
+      updatedSlides[selectedSlideIndex] = {
+        title,
+        year,
+        description,
+        type,
+        duration,
+        url,
+        sourceUrl,
+      };
+      setSlides(updatedSlides);
+
+      // Clear the selection & reset form
+      setSelectedSlideIndex(null);
+      resetSlideFields();
+    } else {
+      // Adding a new slide
+      const newSlide = {
+        title,
+        year,
+        description,
+        type,
+        duration,
+        url,
+        sourceUrl,
+      };
+      setSlides((prev) => [...prev, newSlide]);
+      resetSlideFields();
+    }
+  };
+
+  // 2. Populate the slide form for editing
+  const handleEditSlide = (index) => {
+    const slideToEdit = slides[index];
+    setTitle(slideToEdit.title);
+    setYear(slideToEdit.year);
+    setDescription(slideToEdit.description);
+    setType(slideToEdit.type);
+    setDuration(slideToEdit.duration);
+    setUrl(slideToEdit.url);
+    setSourceUrl(slideToEdit.sourceUrl);
+
+    setSelectedSlideIndex(index);
+  };
+
+  // (Optional) 3. Delete a slide
+  const handleDeleteSlide = (index) => {
+    const updatedSlides = slides.filter((_, i) => i !== index);
+    setSlides(updatedSlides);
+    // If we were editing that slide, reset to null
+    if (selectedSlideIndex === index) {
+      setSelectedSlideIndex(null);
+      resetSlideFields();
+    }
   };
 
   // ========= Save / Update Project to server =========
@@ -130,7 +166,6 @@ function ProjectForm() {
         alert("Project created successfully!");
       }
 
-      // Optionally redirect back to ProjectList or somewhere else
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -138,13 +173,26 @@ function ProjectForm() {
     }
   };
 
-  // Helper if you want to reset all fields in create mode
+  // Helper to reset the entire form (Create Mode)
   const resetFormFields = () => {
     setProjectName("");
     setProjectCategory("");
     setCustomCategory("");
     setSlides([]);
     setLockedProjectFields(false);
+    resetSlideFields();
+  };
+
+  // Helper to reset the slide input fields
+  const resetSlideFields = () => {
+    setTitle("");
+    setYear("");
+    setDescription("");
+    setType("image");
+    setDuration("");
+    setUrl("");
+    setSourceUrl("");
+    setSelectedSlideIndex(null);
   };
 
   return (
@@ -206,7 +254,9 @@ function ProjectForm() {
                   disabled={lockedProjectFields}
                   onChange={(e) => setCustomCategory(e.target.value)}
                   className={`w-full border rounded px-3 py-2 mt-2 ${
-                    lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
+                    lockedProjectFields
+                      ? "bg-gray-100 cursor-not-allowed"
+                      : ""
                   }`}
                 />
               )}
@@ -281,11 +331,9 @@ function ProjectForm() {
 
             {/* Duration */}
             <div className="flex-1">
-              <label className="block mb-1 font-semibold">
-                Duration (optional)
-              </label>
+              <label className="block mb-1 font-semibold">Duration (ms)</label>
               <input
-                type="text"
+                type="number"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
                 className="w-full border rounded px-3 py-2"
@@ -317,13 +365,13 @@ function ProjectForm() {
             />
           </div>
 
-          {/* Add Slide & Save Project Buttons */}
+          {/* Add/Update Slide & Save Project Buttons */}
           <div className="flex justify-between items-center w-full">
             <button
-              onClick={handleAddSlide}
+              onClick={handleAddOrUpdateSlide}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
-              Add Slide
+              {selectedSlideIndex !== null ? "Update Slide" : "Add Slide"}
             </button>
             <button
               onClick={handleSaveProject}
@@ -368,14 +416,37 @@ function ProjectForm() {
 
                 {/* Right half: Title (Year), description, source */}
                 <div className="w-3/4 p-4 flex flex-col justify-between">
-                  <h3 className="text-lg font-bold mb-2">
-                    {slide.title} ({slide.year})
-                  </h3>
-                  <p className="mb-2 leading-relaxed">{slide.description}</p>
-                  <div className="text-right text-sm text-gray-500">
-                    <a href={slide.sourceUrl} target="_blank" rel="noreferrer">
+                  <div>
+                    <h3 className="text-lg font-bold mb-2">
+                      {slide.title} ({slide.year})
+                    </h3>
+                    <p className="mb-2 leading-relaxed">{slide.description}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <a
+                      href={slide.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm text-blue-500 underline"
+                    >
                       Source
                     </a>
+                    <div className="flex space-x-2">
+                      {/* EDIT Slide */}
+                      <button
+                        onClick={() => handleEditSlide(index)}
+                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                      >
+                        Edit
+                      </button>
+                      {/* DELETE Slide (optional) */}
+                      <button
+                        onClick={() => handleDeleteSlide(index)}
+                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
