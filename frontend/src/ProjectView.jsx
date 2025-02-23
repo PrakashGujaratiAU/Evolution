@@ -8,6 +8,7 @@ export default function ProjectView() {
 
   // State for fetched slides
   const [slides, setSlides] = useState([]);
+  const [project, setProject] = useState("");
 
   // Call your API to fetch the project (and its slides)
   useEffect(() => {
@@ -20,6 +21,7 @@ export default function ProjectView() {
         const data = await response.json();
         if (data.slides) {
           setSlides(data.slides);
+          setProject(data.projectName);
         } else {
           console.warn("Project found, but no slides array");
         }
@@ -105,23 +107,9 @@ export default function ProjectView() {
   return (
     <div className="relative w-full flex flex-col justify-center items-center min-h-screen gap-2 mx-auto px-4">
       <h1 className="absolute top-5 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
-        A TIMELINE OF EVOLUTION
+        A TIMELINE OF EVOLUTION OF{" "}
+        <span style={{ color: "blue" }}>{project.toUpperCase()}</span>
       </h1>
-
-      <div className="flex justify-between w-full max-w-6xl px-4">
-        <button
-          onClick={startForward}
-          className="p-2 bg-green-200 text-black font-bold rounded-full hover:bg-green-700 transition"
-        >
-          <FastForward />
-        </button>
-        <button
-          onClick={startBackward}
-          className="p-2 bg-red-200 text-black font-bold rounded-full hover:bg-red-700 transition rotate-180"
-        >
-          <FastForward />
-        </button>
-      </div>
 
       <div className="overflow-hidden w-full h-auto">
         {/* Ensure we only render the slides if slides.length > 0 */}
@@ -210,19 +198,39 @@ export default function ProjectView() {
         </div>
       )}
 
-      <button
-        onClick={() => setCurrentIndex(0)}
-        className="absolute bottom-5 left-4 p-2 text-green-500 font-bold rounded-full hover:bg-green-100 transition"
-      >
-        <ChevronFirst />
-      </button>
+      <div className="absolute bottom-5 w-full flex justify-center items-center gap-4">
+        {/* Go to first slide */}
+        <button
+          onClick={() => setCurrentIndex(0)}
+          className="p-2 text-green-500 font-bold rounded-full hover:bg-green-100 transition"
+        >
+          <ChevronFirst />
+        </button>
 
-      <button
-        onClick={() => setCurrentIndex(slides.length - 1)}
-        className="absolute bottom-5 right-4 p-2 text-red-500 font-bold rounded-full hover:bg-red-100 transition"
-      >
-        <ChevronLast />
-      </button>
+        {/* Backward */}
+        <button
+          onClick={startBackward}
+          className="p-2 bg-red-200 text-black font-bold rounded-full hover:bg-red-700 transition rotate-180"
+        >
+          <FastForward />
+        </button>
+
+        {/* Forward */}
+        <button
+          onClick={startForward}
+          className="p-2 bg-green-200 text-black font-bold rounded-full hover:bg-green-700 transition"
+        >
+          <FastForward />
+        </button>
+
+        {/* Go to last slide */}
+        <button
+          onClick={() => setCurrentIndex(slides.length - 1)}
+          className="p-2 text-red-500 font-bold rounded-full hover:bg-red-100 transition"
+        >
+          <ChevronLast />
+        </button>
+      </div>
     </div>
   );
 }
