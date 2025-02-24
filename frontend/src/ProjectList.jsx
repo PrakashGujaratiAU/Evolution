@@ -1,12 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-/**
- * ProjectList
- * - Fetches all projects from `GET /projects`
- * - Adds new projects via `POST /projects`
- * - Filters list by search query
- * - Voice input for search
- */
+import axios from "axios";
+
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
@@ -22,8 +17,7 @@ const ProjectList = () => {
 
   // Setup SpeechRecognition on mount
   useEffect(() => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
@@ -109,28 +103,27 @@ const ProjectList = () => {
     navigate(`/projects/${projId}/view`);
   };
 
+  const handleDeleteProject = async (projId) => {
+    // alert(`View project with ID = ${projId}`);
+    await axios.delete(`http://localhost:3001/projects/${projId}`);
+    alert("Project deleted successfully!");
+    fetchProjects();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header / Top bar */}
       <div className="flex items-center p-4 bg-white shadow-sm">
         {/* Hamburger icon (left) */}
-        <button
-          className="px-2 focus:outline-none"
-          onClick={() => alert("Menu clicked!")}
-        >
+        <button className="px-2 focus:outline-none" onClick={() => alert("Menu clicked!")}>
           {/* Simple bars icon */}
           <svg
             className="w-6 h-6 text-gray-700"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+            viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
 
@@ -146,20 +139,13 @@ const ProjectList = () => {
           {/* Mic button (absolute right) */}
           <button
             className="absolute right-2 top-2 text-gray-600 hover:text-gray-900"
-            onClick={handleMicClick}
-          >
-            <svg
-              className="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              aria-hidden="true"
-            >
+            onClick={handleMicClick}>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M9 2a3 3 0 0 1 3 3v4a3 3 0 1 1-6 0V5a3 3 0 0 1 3-3z"></path>
               <path
                 fillRule="evenodd"
                 d="M5 9a.75.75 0 0 1 1.5 0v1A3.5 3.5 0 0 0 10 13.5h0A3.5 3.5 0 0 0 13.5 10V9a.75.75 0 0 1 1.5 0v1A5 5 0 0 1 10 15h0a5 5 0 0 1-5-5V9z"
-                clipRule="evenodd"
-              ></path>
+                clipRule="evenodd"></path>
               <path d="M9.25 17a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5h-1.5z"></path>
             </svg>
           </button>
@@ -168,8 +154,7 @@ const ProjectList = () => {
         {/* Add button (right) */}
         <button
           className="ml-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
-          onClick={handleAddProject}
-        >
+          onClick={handleAddProject}>
           Add
         </button>
       </div>
@@ -179,26 +164,17 @@ const ProjectList = () => {
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left font-semibold text-gray-600">
-                Title
-              </th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-600">Title</th>
               {/* Add text-right here */}
-              <th className="px-12 py-2 text-right font-semibold text-gray-600">
-                Action
-              </th>
+              <th className="px-12 py-2 text-right font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
           <tbody>
             {filteredProjects.map((proj) => (
-              <tr
-                key={proj._id || proj.id}
-                className="border-b last:border-b-0 hover:bg-gray-50"
-              >
+              <tr key={proj._id || proj.id} className="border-b last:border-b-0 hover:bg-gray-50">
                 {/* Project Name & Category */}
                 <td className="px-4 py-3">
-                  <div className="font-semibold text-gray-800">
-                    {proj.projectName}
-                  </div>
+                  <div className="font-semibold text-gray-800">{proj.projectName}</div>
                   <div className="text-sm text-gray-500">
                     {proj.projectCategory || "No Category"}
                     {/* || Slides Count: {proj.slides.length} */}
@@ -210,15 +186,18 @@ const ProjectList = () => {
                 <td className="px-4 py-3 text-right">
                   <button
                     onClick={() => handleViewProject(proj._id || proj.id)}
-                    className="border border-blue-500 text-blue-500 px-3 py-1 rounded hover:bg-blue-500 hover:text-white transition-colors"
-                  >
+                    className="border border-blue-500 text-blue-500 px-3 py-1 rounded hover:bg-blue-500 hover:text-white transition-colors">
                     View
                   </button>
                   <button
                     onClick={() => handleEditProject(proj._id || proj.id)}
-                    className="border border-green-500 text-green-500 px-3 py-1 rounded hover:bg-green-500 hover:text-white transition-colors ml-2"
-                  >
+                    className="border border-green-500 text-green-500 px-3 py-1 rounded hover:bg-green-500 hover:text-white transition-colors ml-2">
                     Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProject(proj._id || proj.id)}
+                    className="border border-red-500 text-red-500 px-3 py-1 rounded hover:bg-red-500 hover:text-white transition-colors ml-2">
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -236,9 +215,7 @@ const ProjectList = () => {
 
         {/* Footer (View More) */}
         <footer className="fixed bottom-0 left-0 w-full bg-gray-200 py-2 text-center">
-          <span className="text-sm text-gray-700">
-            © 2025 Atmiya University - KRC
-          </span>
+          <span className="text-sm text-gray-700">© 2025 Atmiya University - KRC</span>
         </footer>
         {/* <div className="mt-2 text-right">
           <button
