@@ -15,7 +15,57 @@ function ProjectForm() {
   const [projectName, setProjectName] = useState("");
   const [projectCategory, setProjectCategory] = useState("");
   const [customCategory, setCustomCategory] = useState("");
-  const categoryOptions = ["History", "Technology", "Science", "Art", "Other"];
+  const categoryOptions = [
+    "Science",
+    "Technology",
+    "Engineering",
+    "Mathematics",
+    "Business",
+    "Economics",
+    "Medicine & Healthcare",
+    "Social Sciences",
+    "Humanities",
+    "Education",
+    "History",
+    "Political Science",
+    "Law & Governance",
+    "Environmental Science",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Genetics & Biotechnology",
+    "Artificial Intelligence & Machine Learning",
+    "Cybersecurity & Data Science",
+    "Software Development",
+    "Robotics & Automation",
+    "Space & Astronomy",
+    "Aerospace & Aviation",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Electrical & Electronics Engineering",
+    "Energy & Sustainability",
+    "Arts & Media",
+    "Communication & Journalism",
+    "Philosophy & Ethics",
+    "Cultural Studies",
+    "Linguistics & Language",
+    "Psychology & Human Behavior",
+    "Neuroscience",
+    "Sports Science",
+    "Agriculture & Food Science",
+    "Fashion & Design",
+    "Material Science & Nanotechnology",
+    "Blockchain & Cryptocurrency",
+    "Internet of Things (IoT)",
+    "Renewable Energy",
+    "E-Commerce & Digital Marketing",
+    "Transportation & Smart Cities",
+    "Cloud Computing & Big Data",
+    "Virtual Reality (VR) & Augmented Reality (AR)",
+    "Supply Chain & Logistics",
+    "Metaverse & Digital",
+    "Other",
+  ];
 
   // Slide form fields
   const [title, setTitle] = useState("Abacus");
@@ -41,7 +91,9 @@ function ProjectForm() {
   useEffect(() => {
     async function fetchProject() {
       try {
-        const response = await axios.get(`http://localhost:3001/projects/${id}`);
+        const response = await axios.get(
+          `http://localhost:3001/projects/${id}`
+        );
         const data = response.data;
         // Populate fields
         setProjectName(data.projectName || "");
@@ -254,9 +306,7 @@ function ProjectForm() {
                   disabled={lockedProjectFields}
                   onChange={(e) => setCustomCategory(e.target.value)}
                   className={`w-full border rounded px-3 py-2 mt-2 ${
-                    lockedProjectFields
-                      ? "bg-gray-100 cursor-not-allowed"
-                      : ""
+                    lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
                   }`}
                 />
               )}
