@@ -1,4 +1,4 @@
-import { ChevronFirst, ChevronLast, FastForward } from "lucide-react";
+import { ChevronFirst, ChevronLast, FastForward, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 const API_BASE_URL = "https://krc-evolution.vercel.app/api";
@@ -39,26 +39,27 @@ export default function ProjectView() {
   // The rest of your existing carousel states
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isReverse, setIsReverse] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const maxVisible = 5;
 
   // Handle the timing/duration logic
   useEffect(() => {
-    // If slides are empty, don't try to access slides[currentIndex]
-    if (!slides.length) return;
+    if (!slides.length || isPaused) return;
 
     const slideDuration = slides[currentIndex]?.duration || 5000;
 
     const interval = setTimeout(() => {
       setCurrentIndex((prevIndex) => {
-        if (isReverse) {
-          return prevIndex === 0 ? slides.length - 1 : prevIndex - 1;
-        }
-        return (prevIndex + 1) % slides.length;
+        return isReverse
+          ? prevIndex === 0
+            ? slides.length - 1
+            : prevIndex - 1
+          : (prevIndex + 1) % slides.length;
       });
     }, slideDuration);
 
     return () => clearTimeout(interval);
-  }, [currentIndex, isReverse, slides]);
+  }, [currentIndex, isReverse, isPaused, slides]);
 
   // Jump to a specific slide
   const goToImage = (index) => {
@@ -105,6 +106,9 @@ export default function ProjectView() {
     setCurrentIndex(slides.length ? slides.length - 1 : 0);
   };
 
+  // Toggle pause state
+  const togglePause = () => setIsPaused((prev) => !prev);
+
   return (
     <div className="relative w-full flex flex-col justify-center items-center min-h-screen gap-2 mx-auto px-4">
       <h1 className="absolute top-5 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
@@ -132,7 +136,7 @@ export default function ProjectView() {
                   <img
                     src={item.url}
                     alt="Slide Image"
-                    className="w-[400px] max-w-[400px]  md:max-w-[600px] lg:max-w-[800px] object-contain"
+                    className="w-[400px] max-w-[400px] md:max-w-[600px] lg:max-w-[800px] object-contain"
                   />
                 ) : item.type === "video" ? (
                   <video
@@ -169,19 +173,17 @@ export default function ProjectView() {
               return (
                 <div key={imageIndex} className="text-center">
                   <p
-                    className={`text-sm md:text-lg font-semibold mb-5 ${
-                      isCenterDot ? "text-gray-800" : "text-gray-500"
-                    }`}
+                    className={`text-sm md:text-lg font-semibold mb-5 ${isCenterDot ? "text-gray-800" : "text-gray-500"
+                      }`}
                   >
                     {image.year}
                   </p>
                   <span
                     onClick={() => goToImage(imageIndex)}
-                    className={`cursor-pointer block w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 rounded-full mx-auto transition-all duration-300 ${
-                      isCenterDot
-                        ? "bg-orange-600 scale-[2] border-2 border-[#C9A65C]"
-                        : "bg-orange-600 opacity-75"
-                    }`}
+                    className={`cursor-pointer block w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 rounded-full mx-auto transition-all duration-300 ${isCenterDot
+                      ? "bg-orange-600 scale-[2] border-2 border-[#C9A65C]"
+                      : "bg-orange-600 opacity-75"
+                      }`}
                   ></span>
                 </div>
               );
@@ -214,6 +216,10 @@ export default function ProjectView() {
           className="p-2 bg-red-200 text-black font-bold rounded-full hover:bg-red-700 transition rotate-180"
         >
           <FastForward />
+        </button>
+
+        <button onClick={togglePause} className="p-2 bg-gray-200 text-black font-bold rounded-full hover:bg-gray-500 transition">
+          {isPaused ? <Play /> : <Pause />}
         </button>
 
         {/* Forward */}
