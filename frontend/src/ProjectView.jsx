@@ -1,7 +1,7 @@
 import { ChevronFirst, ChevronLast, FastForward } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-const API_BASE_URL = "/api";
+const API_BASE_URL = "http://localhost:3001/api";
 
 export default function ProjectView() {
   // Get `id` if you need it from the route params
