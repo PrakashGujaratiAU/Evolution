@@ -73,11 +73,8 @@ const ProjectList = () => {
         body: JSON.stringify(newProject),
       });
       if (response.ok) {
-        const createdProject = await response.json(); // Assuming API returns the created project object with an `id`
-        const projId = createdProject._id; // Extract project ID
-        // console.log(createdProject);
-        // Redirect to edit mode for the newly created project
-        navigate(`/projects/${projId}/edit`);
+        // Re-fetch the list to see the newly added project
+        await fetchProjects();
       } else {
         console.error("Failed to create project");
       }
