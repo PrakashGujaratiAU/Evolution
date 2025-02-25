@@ -75,7 +75,7 @@ const ProjectList = () => {
       });
       if (response.ok) {
         const createdProject = await response.json(); // Assuming API returns the created project object with an `id`
-        const projId = createdProject.id; // Extract project ID
+        const projId = createdProject._id; // Extract project ID
 
         // Redirect to edit mode for the newly created project
         navigate(`/projects/${projId}/edit`);
