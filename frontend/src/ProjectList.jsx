@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-const API_BASE_URL = "http://localhost:3001/api";
+const API_BASE_URL = "https://krc-evolution.vercel.app/api";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
