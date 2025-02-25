@@ -1,6 +1,7 @@
 import { ChevronFirst, ChevronLast, FastForward } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+const API_BASE_URL = "/api";
 
 export default function ProjectView() {
   // Get `id` if you need it from the route params
@@ -14,7 +15,7 @@ export default function ProjectView() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/projects/${id}`);
+        const response = await fetch(`${API_BASE_URL}/projects/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch project by ID");
         }

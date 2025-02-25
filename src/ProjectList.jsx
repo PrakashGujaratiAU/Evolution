@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+const API_BASE_URL = "/api";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
@@ -45,7 +46,7 @@ const ProjectList = () => {
   // GET /projects
   const fetchProjects = async () => {
     try {
-      const response = await fetch("http://localhost:3001/projects");
+      const response = await fetch("${API_BASE_URL}/projects");
       if (!response.ok) {
         throw new Error("Failed to fetch projects");
       }
@@ -67,7 +68,7 @@ const ProjectList = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3001/projects", {
+      const response = await fetch("${API_BASE_URL}/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProject),
@@ -105,7 +106,7 @@ const ProjectList = () => {
 
   // const handleDeleteProject = async (projId) => {
   //   // alert(`View project with ID = ${projId}`);
-  //   await axios.delete(`http://localhost:3001/projects/${projId}`);
+  //   await axios.delete(`${API_BASE_URL}/projects/${projId}`);
   //   alert("Project deleted successfully!");
   //   fetchProjects();
   // };

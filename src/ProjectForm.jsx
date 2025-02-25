@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+const API_BASE_URL = "/api";
 
 function ProjectForm() {
   // Router stuff
@@ -91,9 +92,7 @@ function ProjectForm() {
   useEffect(() => {
     async function fetchProject() {
       try {
-        const response = await axios.get(
-          `http://localhost:3001/projects/${id}`
-        );
+        const response = await axios.get(`${API_BASE_URL}/projects/${id}`);
         const data = response.data;
         // Populate fields
         setProjectName(data.projectName || "");
@@ -210,11 +209,11 @@ function ProjectForm() {
 
       if (id) {
         // We have an ID => update existing project
-        await axios.put(`http://localhost:3001/projects/${id}`, payload);
+        await axios.put(`${API_BASE_URL}/projects/${id}`, payload);
         alert("Project updated successfully!");
       } else {
         // No ID => create new project
-        await axios.post("http://localhost:3001/projects", payload);
+        await axios.post("${API_BASE_URL}/projects", payload);
         alert("Project created successfully!");
       }
 
