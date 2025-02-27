@@ -155,7 +155,7 @@ export default function ProjectView() {
         <span style={{ color: "blue" }}> {projectTitle.toUpperCase()}</span>
       </h1>
 
-      <div className="absolute top-25 overflow-hidden w-full h-auto">
+      <div className="absolute top-40 overflow-hidden w-full h-auto">
         {/* Ensure we only render the slides if slides.length > 0 */}
         <div
           className="flex transition-transform duration-500 ease-in-out"
