@@ -2,20 +2,25 @@ import {
   ChevronFirst,
   ChevronLast,
   FastForward,
+  Menu,
   Pause,
   Play,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Header from "./Header";
 const API_BASE_URL = "https://krc-evolution.vercel.app/api";
 
 export default function ProjectView() {
+  const [isOpen, setIsOpen] = useState(false);
   // Get `id` if you need it from the route params
   const { id } = useParams();
 
   // State for fetched slides
   const [slides, setSlides] = useState([]);
-  const [project, setProject] = useState("");
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projects, setProjects] = useState([]);
+  const navigate = useNavigate();
 
   // Call your API to fetch the project (and its slides)
   useEffect(() => {
@@ -28,7 +33,7 @@ export default function ProjectView() {
         const data = await response.json();
         if (data.slides) {
           setSlides(data.slides);
-          setProject(data.projectName);
+          setProjectTitle(data.projectName);
         } else {
           console.warn("Project found, but no slides array");
         }
@@ -41,6 +46,24 @@ export default function ProjectView() {
       fetchProject();
     }
   }, [id]);
+
+  // Fetch the list of projects
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/projects`);
+        if (!response.ok) throw new Error("Failed to fetch projects");
+
+        const data = await response.json();
+        setProjects(data); // Assuming API returns an array of projects
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   // The rest of your existing carousel states
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -117,12 +140,13 @@ export default function ProjectView() {
 
   return (
     <div className="relative w-full flex flex-col justify-center items-center min-h-screen gap-2 mx-auto px-4">
-      <h1 className="absolute top-10 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
-        A TIMELINE OF EVOLUTION OF{" "}
-        <span style={{ color: "blue" }}>{project.toUpperCase()}</span>
+      <Header />
+      <h1 className="absolute top-20 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
+        A TIMELINE OF EVOLUTION OF
+        <span style={{ color: "blue" }}> {projectTitle.toUpperCase()}</span>
       </h1>
 
-      <div className="overflow-hidden w-full h-auto">
+      <div className="absolute top-35 overflow-hidden w-full h-auto">
         {/* Ensure we only render the slides if slides.length > 0 */}
         <div
           className="flex transition-transform duration-500 ease-in-out"
@@ -142,7 +166,7 @@ export default function ProjectView() {
                   <img
                     src={item.url}
                     alt="Slide Image"
-                    className="w-[40%] max-w-[40%] object-contain"
+                    className="w-[35%] max-w-[35%] object-contain"
                   />
                 ) : item.type === "video" ? (
                   <video
@@ -154,7 +178,7 @@ export default function ProjectView() {
                     controls
                   />
                 ) : null}
-                <div className="text-left px-4 w-[40%] max-w-[40%]">
+                <div className="text-left px-4 w-[35%] max-w-[35%]">
                   {item.title && (
                     <h1
                       className="text-black  text-3xl font-bold mb-4"
@@ -175,7 +199,7 @@ export default function ProjectView() {
       </div>
 
       {slides.length > 0 && (
-        <div className="absolute bottom-30 z-10 items-center flex flex-col items-center justify-center mt-5 w-full">
+        <div className="absolute bottom-25 z-10 items-center flex flex-col items-center justify-center mt-5 w-full">
           {/* Timeline Dots */}
           <div className="grid grid-cols-5 gap-6 md:gap-4 space-x-[100px]">
             {visibleImages.map((image, index) => {
@@ -253,6 +277,38 @@ export default function ProjectView() {
         >
           <ChevronLast />
         </button>
+      </div>
+      <div className="fixed bottom-4 right-4 z-20">
+        <div className="relative">
+          {/* Dropdown Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="bg-white p-3 rounded-lg shadow-md border flex items-center justify-center"
+          >
+            <Menu size={20} />
+          </button>
+
+          {/* Dropdown List */}
+          {isOpen && (
+            <div className="absolute bottom-full right-0 mb-2 w-40 bg-white shadow-lg rounded-lg border">
+              <ul className="p-2">
+                {projects.length > 0 ? (
+                  projects.map((project) => (
+                    <li
+                      key={project._id}
+                      onClick={() => navigate(`/projects/${project._id}/view`)}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {project.projectName}
+                    </li>
+                  ))
+                ) : (
+                  <li className="p-2 text-gray-500">No projects found</li>
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
