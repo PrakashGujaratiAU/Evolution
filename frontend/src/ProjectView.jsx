@@ -1,4 +1,10 @@
-import { ChevronFirst, ChevronLast, FastForward, Pause, Play } from "lucide-react";
+import {
+  ChevronFirst,
+  ChevronLast,
+  FastForward,
+  Pause,
+  Play,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 const API_BASE_URL = "https://krc-evolution.vercel.app/api";
@@ -111,7 +117,7 @@ export default function ProjectView() {
 
   return (
     <div className="relative w-full flex flex-col justify-center items-center min-h-screen gap-2 mx-auto px-4">
-      <h1 className="absolute top-5 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
+      <h1 className="absolute top-10 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
         A TIMELINE OF EVOLUTION OF{" "}
         <span style={{ color: "blue" }}>{project.toUpperCase()}</span>
       </h1>
@@ -136,27 +142,32 @@ export default function ProjectView() {
                   <img
                     src={item.url}
                     alt="Slide Image"
-                    className="w-[400px] max-w-[400px] md:max-w-[600px] lg:max-w-[800px] object-contain"
+                    className="w-[40%] max-w-[40%] object-contain"
                   />
                 ) : item.type === "video" ? (
                   <video
                     ref={(el) => (videoRefs.current[index] = el)}
                     src={item.url}
-                    className="w-full max-w-[90%] md:max-w-[600px] lg:max-w-[800px] object-contain"
+                    className="w-full max-w-[40%] object-contain"
                     muted
                     playsInline
                     controls
                   />
                 ) : null}
-
-                {item.description && (
-                  <div className="max-w-xs text-left px-4">
+                <div className="text-left px-4 w-[40%] max-w-[40%]">
+                  {item.title && (
+                    <h1
+                      className="text-black  text-3xl font-bold mb-4"
+                      dangerouslySetInnerHTML={{ __html: item.title }}
+                    />
+                  )}
+                  {item.description && (
                     <p
-                      className="text-gray-700"
+                      className="text-gray-700 text-2xl"
                       dangerouslySetInnerHTML={{ __html: item.description }}
                     />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -164,7 +175,7 @@ export default function ProjectView() {
       </div>
 
       {slides.length > 0 && (
-        <div className="flex flex-col items-center justify-center mt-5 w-full">
+        <div className="absolute bottom-30 z-10 items-center flex flex-col items-center justify-center mt-5 w-full">
           {/* Timeline Dots */}
           <div className="grid grid-cols-5 gap-6 md:gap-4 space-x-[100px]">
             {visibleImages.map((image, index) => {
@@ -173,17 +184,19 @@ export default function ProjectView() {
               return (
                 <div key={imageIndex} className="text-center">
                   <p
-                    className={`text-sm md:text-lg font-semibold mb-5 ${isCenterDot ? "text-gray-800" : "text-gray-500"
-                      }`}
+                    className={`text-sm md:text-lg font-semibold mb-5 ${
+                      isCenterDot ? "text-gray-800" : "text-gray-500"
+                    }`}
                   >
                     {image.year}
                   </p>
                   <span
                     onClick={() => goToImage(imageIndex)}
-                    className={`cursor-pointer block w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 rounded-full mx-auto transition-all duration-300 ${isCenterDot
-                      ? "bg-orange-600 scale-[2] border-2 border-[#C9A65C]"
-                      : "bg-orange-600 opacity-75"
-                      }`}
+                    className={`cursor-pointer block w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 rounded-full mx-auto transition-all duration-300 ${
+                      isCenterDot
+                        ? "bg-orange-600 scale-[2] border-2 border-[#C9A65C]"
+                        : "bg-orange-600 opacity-75"
+                    }`}
                   ></span>
                 </div>
               );
@@ -201,7 +214,7 @@ export default function ProjectView() {
         </div>
       )}
 
-      <div className="absolute bottom-5 w-full flex justify-center items-center gap-4">
+      <div className="absolute bottom-5 w-full flex justify-center mr-25 items-center gap-4">
         {/* Go to first slide */}
         <button
           onClick={() => setCurrentIndex(0)}
@@ -218,7 +231,10 @@ export default function ProjectView() {
           <FastForward />
         </button>
 
-        <button onClick={togglePause} className="p-2 bg-gray-200 text-black font-bold rounded-full hover:bg-gray-500 transition">
+        <button
+          onClick={togglePause}
+          className="p-2 bg-gray-200 text-black font-bold rounded-full hover:bg-gray-500 transition"
+        >
           {isPaused ? <Play /> : <Pause />}
         </button>
 
