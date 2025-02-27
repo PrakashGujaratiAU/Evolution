@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import au from "./au.png";
 const API_BASE_URL = "https://krc-evolution.vercel.app/api";
-
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
@@ -117,7 +117,17 @@ const ProjectList = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header / Top bar */}
-      <div className="flex items-center p-4 bg-white shadow-sm">
+      <div className="bg-[#22225E] text-white flex  items-center  justify-center absolute top-0 w-full">
+        <img
+          src={au}
+          alt="atmiya university"
+          className="h-15 ml-10 mr-3 my-1"
+        />
+        <h3 className="text-2xl font-serif font-semibold">
+          ATMIYA UNIVERSITY - Knowledge Resource Center
+        </h3>
+      </div>
+      <div className="absolute top-20 w-full  flex items-center p-4 bg-white shadow-sm">
         {/* Hamburger icon (left) */}
         <button
           className="px-2 focus:outline-none"
@@ -180,7 +190,7 @@ const ProjectList = () => {
       </div>
 
       {/* PROJECTS TABLE */}
-      <div className="p-8 w-1/2 mx-auto">
+      <div className="mt-35 p-8 w-1/2 mx-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr className="bg-gray-100">

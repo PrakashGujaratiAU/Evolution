@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "./Header";
+import au from "./au.png";
 const API_BASE_URL = "https://krc-evolution.vercel.app/api";
 
 export default function ProjectView() {
@@ -140,7 +140,16 @@ export default function ProjectView() {
 
   return (
     <div className="relative w-full flex flex-col justify-center items-center min-h-screen gap-2 mx-auto px-4">
-      <Header />
+      <div className="bg-[#22225E] text-white flex  items-center  justify-center absolute top-0 w-full">
+        <img
+          src={au}
+          alt="atmiya university"
+          className="h-15 ml-10 mr-3 my-1"
+        />
+        <h3 className="text-2xl font-serif font-semibold">
+          ATMIYA UNIVERSITY - Knowledge Resource Center
+        </h3>
+      </div>
       <h1 className="absolute top-20 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
         A TIMELINE OF EVOLUTION OF
         <span style={{ color: "blue" }}> {projectTitle.toUpperCase()}</span>
