@@ -9,8 +9,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Header";
-// const API_BASE_URL = "https://krc-evolution.vercel.app/api";
-const API_BASE_URL = "http://127.0.0.1:3001/api";
+const API_BASE_URL = "https://krc-evolution.vercel.app/api";
+// const API_BASE_URL = "http://127.0.0.1:3001/api";
 
 export default function ProjectView() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
