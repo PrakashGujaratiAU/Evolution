@@ -70,19 +70,13 @@ function ProjectForm() {
   ];
 
   // Slide form fields
-  const [title, setTitle] = useState("Abacus");
-  const [year, setYear] = useState("3000 BCE");
-  const [description, setDescription] = useState(
-    "An ancient tool used for arithmetic calculations..."
-  );
+  const [title, setTitle] = useState("");
+  const [year, setYear] = useState("");
+  const [description, setDescription] = useState("");
   const [type, setType] = useState("image");
   const [duration, setDuration] = useState("5000");
-  const [url, setUrl] = useState(
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Abacus_2.jpg/1200px-Abacus_2.jpg?20101203184045"
-  );
-  const [sourceUrl, setSourceUrl] = useState(
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Abacus_2.jpg/1200px-Abacus_2.jpg?20101203184045"
-  );
+  const [url, setUrl] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
   const [slides, setSlides] = useState([]);
 
   // This will track which slide we're editing. Null = adding new slide
