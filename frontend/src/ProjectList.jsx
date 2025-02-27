@@ -1,11 +1,65 @@
+import { Mic } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import au from "./au.png";
-const API_BASE_URL = "https://krc-evolution.vercel.app/api";
+import Header from "./Header";
+// const API_BASE_URL = "https://krc-evolution.vercel.app/api";
+const API_BASE_URL = "http://127.0.0.1:3001/api";
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([
+    "Science",
+    "Technology",
+    "Engineering",
+    "Mathematics",
+    "Business",
+    "Economics",
+    "Medicine & Healthcare",
+    "Social Sciences",
+    "Humanities",
+    "Education",
+    "History",
+    "Political Science",
+    "Law & Governance",
+    "Environmental Science",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Genetics & Biotechnology",
+    "Artificial Intelligence & Machine Learning",
+    "Cybersecurity & Data Science",
+    "Software Development",
+    "Robotics & Automation",
+    "Space & Astronomy",
+    "Aerospace & Aviation",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Electrical & Electronics Engineering",
+    "Energy & Sustainability",
+    "Arts & Media",
+    "Communication & Journalism",
+    "Philosophy & Ethics",
+    "Cultural Studies",
+    "Linguistics & Language",
+    "Psychology & Human Behavior",
+    "Neuroscience",
+    "Sports Science",
+    "Agriculture & Food Science",
+    "Fashion & Design",
+    "Material Science & Nanotechnology",
+    "Blockchain & Cryptocurrency",
+    "Internet of Things (IoT)",
+    "Renewable Energy",
+    "E-Commerce & Digital Marketing",
+    "Transportation & Smart Cities",
+    "Cloud Computing & Big Data",
+    "Virtual Reality (VR) & Augmented Reality (AR)",
+    "Supply Chain & Logistics",
+    "Metaverse & Digital",
+    "Other",
+  ]);
 
   const navigate = useNavigate();
   const recognitionRef = useRef(null);
@@ -35,18 +89,28 @@ const ProjectList = () => {
   // Filter whenever searchQuery or projects change
   useEffect(() => {
     const lowerSearch = searchQuery.toLowerCase();
-    const results = projects.filter(
-      (p) =>
+    const lowerCategory = selectedCategory.toLowerCase();
+
+    const results = projects.filter((p) => {
+      const matchesSearch =
         p.projectName.toLowerCase().includes(lowerSearch) ||
-        (p.projectCategory || "").toLowerCase().includes(lowerSearch)
-    );
+        (p.projectCategory || "").toLowerCase().includes(lowerSearch);
+
+      const matchesCategory =
+        !selectedCategory ||
+        (p.projectCategory || "").toLowerCase() === lowerCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+
     setFilteredProjects(results);
-  }, [searchQuery, projects]);
+  }, [searchQuery, selectedCategory, projects]);
 
   // GET /projects
   const fetchProjects = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/projects`);
+      console.log(response);
       if (!response.ok) {
         throw new Error("Failed to fetch projects");
       }
@@ -117,23 +181,14 @@ const ProjectList = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header / Top bar */}
-      <div className="bg-[#22225E] text-white flex  items-center  justify-center absolute top-0 w-full">
-        <img
-          src={au}
-          alt="atmiya university"
-          className="h-15 ml-10 mr-3 my-1"
-        />
-        <h3 className="text-2xl font-serif font-semibold">
-          ATMIYA UNIVERSITY - Knowledge Resource Center
-        </h3>
-      </div>
+      <Header />
       <div className="absolute top-20 w-full  flex items-center p-4 bg-white shadow-sm">
         {/* Hamburger icon (left) */}
-        <button
+        {/* <button
           className="px-2 focus:outline-none"
           onClick={() => alert("Menu clicked!")}
         >
-          {/* Simple bars icon */}
+          
           <svg
             className="w-6 h-6 text-gray-700"
             fill="none"
@@ -147,7 +202,7 @@ const ProjectList = () => {
               d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
-        </button>
+        </button> */}
 
         {/* Search + mic */}
         <div className="relative flex-1 ml-2">
@@ -156,33 +211,38 @@ const ProjectList = () => {
             placeholder="Search Project"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 rounded-md w-full px-4 py-2"
+            className="border border-gray-300 rounded-md w-[45vw] ml-10 px-4 py-2"
           />
-          {/* Mic button (absolute right) */}
-          <button
-            className="absolute right-2 top-2 text-gray-600 hover:text-gray-900"
-            onClick={handleMicClick}
+          <select
+            name="category"
+            id="category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border border-gray-300 rounded-md w-[45vw] ml-2 px-4 py-2"
           >
-            <svg
-              className="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              aria-hidden="true"
+            <option value="" selected>
+              All
+            </option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          {/* Mic button (absolute right) */}
+          <div>
+            <button
+              className="absolute left-2 top-2 text-gray-600 hover:text-gray-900"
+              onClick={handleMicClick}
             >
-              <path d="M9 2a3 3 0 0 1 3 3v4a3 3 0 1 1-6 0V5a3 3 0 0 1 3-3z"></path>
-              <path
-                fillRule="evenodd"
-                d="M5 9a.75.75 0 0 1 1.5 0v1A3.5 3.5 0 0 0 10 13.5h0A3.5 3.5 0 0 0 13.5 10V9a.75.75 0 0 1 1.5 0v1A5 5 0 0 1 10 15h0a5 5 0 0 1-5-5V9z"
-                clipRule="evenodd"
-              ></path>
-              <path d="M9.25 17a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5h-1.5z"></path>
-            </svg>
-          </button>
+              <Mic className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Add button (right) */}
         <button
-          className="ml-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+          className="ml-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold  px-4 py-2 rounded"
           onClick={handleAddProject}
         >
           Add

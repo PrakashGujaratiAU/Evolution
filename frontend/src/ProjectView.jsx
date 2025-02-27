@@ -8,18 +8,70 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import au from "./au.png";
-const API_BASE_URL = "https://krc-evolution.vercel.app/api";
+import Header from "./Header";
+// const API_BASE_URL = "https://krc-evolution.vercel.app/api";
+const API_BASE_URL = "http://127.0.0.1:3001/api";
 
 export default function ProjectView() {
-  const [isOpen, setIsOpen] = useState(false);
-  // Get `id` if you need it from the route params
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isProjectOpen, setIsProjectOpen] = useState(false);
   const { id } = useParams();
 
-  // State for fetched slides
   const [slides, setSlides] = useState([]);
   const [projectTitle, setProjectTitle] = useState("");
   const [projects, setProjects] = useState([]);
+  const [categories] = useState([
+    "Science",
+    "Technology",
+    "Engineering",
+    "Mathematics",
+    "Business",
+    "Economics",
+    "Medicine & Healthcare",
+    "Social Sciences",
+    "Humanities",
+    "Education",
+    "History",
+    "Political Science",
+    "Law & Governance",
+    "Environmental Science",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Genetics & Biotechnology",
+    "Artificial Intelligence & Machine Learning",
+    "Cybersecurity & Data Science",
+    "Software Development",
+    "Robotics & Automation",
+    "Space & Astronomy",
+    "Aerospace & Aviation",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Electrical & Electronics Engineering",
+    "Energy & Sustainability",
+    "Arts & Media",
+    "Communication & Journalism",
+    "Philosophy & Ethics",
+    "Cultural Studies",
+    "Linguistics & Language",
+    "Psychology & Human Behavior",
+    "Neuroscience",
+    "Sports Science",
+    "Agriculture & Food Science",
+    "Fashion & Design",
+    "Material Science & Nanotechnology",
+    "Blockchain & Cryptocurrency",
+    "Internet of Things (IoT)",
+    "Renewable Energy",
+    "E-Commerce & Digital Marketing",
+    "Transportation & Smart Cities",
+    "Cloud Computing & Big Data",
+    "Virtual Reality (VR) & Augmented Reality (AR)",
+    "Supply Chain & Logistics",
+    "Metaverse & Digital",
+    "Other",
+  ]);
+  const [selectedCategory, setSelectedCategory] = useState("Technology");
   const navigate = useNavigate();
 
   // Call your API to fetch the project (and its slides)
@@ -47,23 +99,27 @@ export default function ProjectView() {
     }
   }, [id]);
 
-  // Fetch the list of projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/projects`);
+        const url = `${API_BASE_URL}/projects?projectCategory=${encodeURIComponent(
+          selectedCategory
+        )}`;
+
+        const response = await fetch(url);
+
         if (!response.ok) throw new Error("Failed to fetch projects");
 
         const data = await response.json();
-        setProjects(data); // Assuming API returns an array of projects
-        console.log(data);
+        console.log(url);
+        setProjects(data);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
     };
 
     fetchProjects();
-  }, []);
+  }, [selectedCategory]);
 
   // The rest of your existing carousel states
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -140,23 +196,14 @@ export default function ProjectView() {
 
   return (
     <div className="relative w-full flex flex-col justify-center items-center min-h-screen gap-2 mx-auto px-4">
-      <div className="bg-[#22225E] text-white flex  items-center  justify-center absolute top-0 w-full">
-        <img
-          src={au}
-          alt="atmiya university"
-          className="h-15 ml-10 mr-3 my-1"
-        />
-        <h3 className="text-2xl font-serif font-semibold">
-          ATMIYA UNIVERSITY - Knowledge Resource Center
-        </h3>
-      </div>
-      <h1 className="absolute top-20 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
+      <Header />
+      <h1 className="absolute top-25 text-gray-700 text-center text-lg md:text-xl lg:text-2xl font-bold underline underline-offset-4 decoration-orange">
         A TIMELINE OF EVOLUTION OF
         <span style={{ color: "blue" }}> {projectTitle.toUpperCase()}</span>
       </h1>
 
-      <div className="absolute top-40 overflow-hidden w-full h-auto">
-        {/* Ensure we only render the slides if slides.length > 0 */}
+      <div className="overflow-hidden w-full h-auto">
+        {/* absolute top-50 */}
         <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{
@@ -208,7 +255,7 @@ export default function ProjectView() {
       </div>
 
       {slides.length > 0 && (
-        <div className="absolute bottom-25 z-10 items-center flex flex-col items-center justify-center mt-5 w-full">
+        <div className="absolute bottom-30 z-10 items-center flex flex-col items-center justify-center mt-5 w-full">
           {/* Timeline Dots */}
           <div className="grid grid-cols-5 gap-6 md:gap-4 space-x-[100px]">
             {visibleImages.map((image, index) => {
@@ -287,37 +334,67 @@ export default function ProjectView() {
           <ChevronLast />
         </button>
       </div>
-      <div className="fixed bottom-4 right-4 z-20">
-        <div className="relative">
-          {/* Dropdown Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="bg-white p-3 rounded-lg shadow-md border flex items-center justify-center"
-          >
-            <Menu size={20} />
-          </button>
 
-          {/* Dropdown List */}
-          {isOpen && (
-            <div className="absolute bottom-full right-0 mb-2 w-40 bg-white shadow-lg rounded-lg border">
-              <ul className="p-2">
-                {projects.length > 0 ? (
-                  projects.map((project) => (
-                    <li
-                      key={project._id}
-                      onClick={() => navigate(`/projects/${project._id}/view`)}
-                      className="p-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      {project.projectName}
-                    </li>
-                  ))
-                ) : (
-                  <li className="p-2 text-gray-500">No projects found</li>
-                )}
-              </ul>
-            </div>
-          )}
-        </div>
+      {/* Category Dropdown - LEFT BOTTOM (Scrollable) */}
+      <div className="fixed bottom-4 left-4 z-20">
+        <button
+          onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+          className="bg-white p-3 rounded-lg shadow-md border flex items-center justify-center"
+        >
+          <Menu size={20} />
+        </button>
+
+        {isCategoryOpen && (
+          <div className="absolute bottom-full left-0 mb-2 w-52 max-h-60 bg-white shadow-lg rounded-lg border overflow-y-auto">
+            <ul className="p-2">
+              {categories.map((category, index) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    setIsCategoryOpen(false);
+                  }}
+                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  {category}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* Projects Dropdown - RIGHT BOTTOM */}
+      <div className="fixed bottom-4 right-4 z-20">
+        <button
+          onClick={() => setIsProjectOpen(!isProjectOpen)}
+          className="bg-white p-3 rounded-lg shadow-md border flex items-center justify-center"
+        >
+          <Menu size={20} />
+        </button>
+
+        {isProjectOpen && (
+          <div className="absolute bottom-full right-0 mb-2 w-52 bg-white shadow-lg rounded-lg border">
+            <ul className="p-2">
+              {projects.length > 0 ? (
+                projects.map((project) => (
+                  <li
+                    key={project._id}
+                    onClick={() => {
+                      navigate(`/projects/${project._id}/view`);
+                      setIsProjectOpen(false);
+                    }}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    {project.projectName}
+                  </li>
+                ))
+              ) : (
+                <li className="p-2 text-gray-500">No projects found</li>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

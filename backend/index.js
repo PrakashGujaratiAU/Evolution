@@ -67,9 +67,25 @@ app.post("/api/projects", async (req, res) => {
 });
 
 // =========== READ (list) all projects ==========
+// app.get("/api/projects", async (req, res) => {
+//   try {
+//     const projects = await Project.find({});
+//     res.json(projects);
+//   } catch (error) {
+//     console.error("Error fetching projects:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
+// =========== READ (list) all projects ==========
 app.get("/api/projects", async (req, res) => {
   try {
-    const projects = await Project.find({});
+    console.log("Query params:", req.query); // Debugging log
+    const { projectCategory } = req.query;
+    const filter = projectCategory ? { projectCategory } : {};
+    console.log("Filter applied:", filter); // Debugging log
+
+    const projects = await Project.find(filter);
     res.json(projects);
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -123,6 +139,63 @@ app.delete("/api/projects/:id", async (req, res) => {
     console.error("Error deleting project:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+// =========== GET Categories List ==============
+const categories = [
+  "Science",
+  "Technology",
+  "Engineering",
+  "Mathematics",
+  "Business",
+  "Economics",
+  "Medicine & Healthcare",
+  "Social Sciences",
+  "Humanities",
+  "Education",
+  "History",
+  "Political Science",
+  "Law & Governance",
+  "Environmental Science",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "Genetics & Biotechnology",
+  "Artificial Intelligence & Machine Learning",
+  "Cybersecurity & Data Science",
+  "Software Development",
+  "Robotics & Automation",
+  "Space & Astronomy",
+  "Aerospace & Aviation",
+  "Mechanical Engineering",
+  "Civil Engineering",
+  "Electrical & Electronics Engineering",
+  "Energy & Sustainability",
+  "Arts & Media",
+  "Communication & Journalism",
+  "Philosophy & Ethics",
+  "Cultural Studies",
+  "Linguistics & Language",
+  "Psychology & Human Behavior",
+  "Neuroscience",
+  "Sports Science",
+  "Agriculture & Food Science",
+  "Fashion & Design",
+  "Material Science & Nanotechnology",
+  "Blockchain & Cryptocurrency",
+  "Internet of Things (IoT)",
+  "Renewable Energy",
+  "E-Commerce & Digital Marketing",
+  "Transportation & Smart Cities",
+  "Cloud Computing & Big Data",
+  "Virtual Reality (VR) & Augmented Reality (AR)",
+  "Supply Chain & Logistics",
+  "Metaverse & Digital",
+  "Other",
+];
+
+app.get("/api/categories", (req, res) => {
+  res.json(categories);
 });
 
 // Start Server

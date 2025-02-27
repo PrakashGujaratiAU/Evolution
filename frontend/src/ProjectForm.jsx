@@ -2,7 +2,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-const API_BASE_URL = "https://krc-evolution.vercel.app/api";
+// const API_BASE_URL = "https://krc-evolution.vercel.app/api";
+const API_BASE_URL = "http://127.0.0.1:3001/api";
 
 function ProjectForm() {
   // Router stuff
@@ -266,8 +267,9 @@ function ProjectForm() {
                 value={projectName}
                 disabled={lockedProjectFields}
                 onChange={(e) => setProjectName(e.target.value)}
-                className={`w-full border rounded px-3 py-2 ${lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
-                  }`}
+                className={`w-full border rounded px-3 py-2 ${
+                  lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
+                }`}
               />
             </div>
 
@@ -285,8 +287,9 @@ function ProjectForm() {
                     setCustomCategory("");
                   }
                 }}
-                className={`w-full border rounded px-3 py-2 ${lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
-                  }`}
+                className={`w-full border rounded px-3 py-2 ${
+                  lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
+                }`}
               >
                 <option value="">-- Select Category --</option>
                 {categoryOptions.map((option) => (
@@ -302,8 +305,9 @@ function ProjectForm() {
                   value={customCategory}
                   disabled={lockedProjectFields}
                   onChange={(e) => setCustomCategory(e.target.value)}
-                  className={`w-full border rounded px-3 py-2 mt-2 ${lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
-                    }`}
+                  className={`w-full border rounded px-3 py-2 mt-2 ${
+                    lockedProjectFields ? "bg-gray-100 cursor-not-allowed" : ""
+                  }`}
                 />
               )}
             </div>
