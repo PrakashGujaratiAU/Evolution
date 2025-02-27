@@ -155,7 +155,7 @@ export default function ProjectView() {
         <span style={{ color: "blue" }}> {projectTitle.toUpperCase()}</span>
       </h1>
 
-      <div className="absolute top-35 overflow-hidden w-full h-auto">
+      <div className="absolute top-25 overflow-hidden w-full h-auto">
         {/* Ensure we only render the slides if slides.length > 0 */}
         <div
           className="flex transition-transform duration-500 ease-in-out"
@@ -175,7 +175,7 @@ export default function ProjectView() {
                   <img
                     src={item.url}
                     alt="Slide Image"
-                    className="w-[35%] max-w-[35%] object-contain"
+                    className="w-[30%] max-w-[30%] object-contain"
                   />
                 ) : item.type === "video" ? (
                   <video
@@ -187,10 +187,10 @@ export default function ProjectView() {
                     controls
                   />
                 ) : null}
-                <div className="text-left px-4 w-[35%] max-w-[35%]">
+                <div className="text-left px-4 w-[30%] max-w-[30%]">
                   {item.title && (
                     <h1
-                      className="text-black  text-3xl font-bold mb-4"
+                      className="text-black  text-2xl font-bold mb-4"
                       dangerouslySetInnerHTML={{ __html: item.title }}
                     />
                   )}
