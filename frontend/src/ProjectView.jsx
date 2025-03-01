@@ -342,6 +342,7 @@ export default function ProjectView() {
           className="bg-white p-3 rounded-lg shadow-md border flex items-center justify-center"
         >
           <Menu size={20} />
+          <span className="ml-2">Category</span>
         </button>
 
         {isCategoryOpen && (
@@ -370,7 +371,7 @@ export default function ProjectView() {
           onClick={() => setIsProjectOpen(!isProjectOpen)}
           className="bg-white p-3 rounded-lg shadow-md border flex items-center justify-center"
         >
-          <Menu size={20} />
+          <span className="mr-2">Topics</span> <Menu size={20} />
         </button>
 
         {isProjectOpen && (
