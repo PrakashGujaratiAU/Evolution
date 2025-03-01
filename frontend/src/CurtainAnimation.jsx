@@ -3,11 +3,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import background from "./background.jpg";
 import frontcurtain from "./frontcurtain.jpg";
+import introMusic from "./intro.mp3";
 import rope from "./rope.png";
 
 const CurtainAnimation = () => {
   const [curtainOpen, setCurtainOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Function to handle rope click, toggles curtain state and plays audio
+  const handleRopeClick = () => {
+    setCurtainOpen(!curtainOpen);
+    const audio = new Audio(introMusic);
+    audio.play().catch((error) => {
+      console.error("Error playing audio:", error);
+    });
+  };
 
   return (
     <div
@@ -30,13 +40,10 @@ const CurtainAnimation = () => {
         transition={{ duration: 2, ease: "easeInOut" }}
       />
 
-      {/* Logo */}
-      {/* <img src={buildinter} alt="Logo" className="relative z-10 w-1/3" /> */}
-
       {/* Rope Button */}
       <motion.button
         className="absolute top-[-40px] left-1/2 transform -translate-x-1/2 z-30 focus:outline-none"
-        onClick={() => setCurtainOpen(!curtainOpen)}
+        onClick={handleRopeClick}
         animate={{ top: curtainOpen ? "0px" : "-40px" }}
         transition={{ type: "spring", stiffness: 100, damping: 10 }}
       >
