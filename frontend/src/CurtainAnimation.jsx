@@ -55,7 +55,7 @@ const CurtainAnimation = () => {
         className="absolute bottom-25 left-1/2 transform -translate-x-1/2 bg-[#3d3c85] text-white px-6 py-2 rounded-lg shadow-lg hover:bg-[#31305c] transition"
         onClick={() => navigate(`/index`)}
       >
-        Press Here
+        Click to Start Your Curious Journey
       </button>
     </div>
   );
